@@ -8,7 +8,7 @@ function expressionCalculator(expr) {
 
     function tokenize(code) {
         let results = [];
-        const tokenRegExp = /\s*([A-Za-z]+|[0-9]+|\S)\s*/g;
+        const tokenRegExp = /\s*([0-9]+|\S)\s*/g;
         let checkBrackets = [];
         let bracketPaired = 0;
         let temp;
@@ -42,10 +42,6 @@ function expressionCalculator(expr) {
         return token !== undefined && token.match(/^[0-9]+$/) !== null;
     }
 
-    function isName(token) {
-        return token !== undefined && token.match(/^[A-Za-z]+$/) !== null;
-    }
-
 
     function parse(code) {
 
@@ -64,18 +60,12 @@ function expressionCalculator(expr) {
             if (isNumber(t)) {
                 position++;
                 return {type: "number", value: t};
-
-            } else if (isName(t)) {
-
-                position++;
-                return {type: "name", id: t};
             } else if (t === "(") {
-
                 position++;
                 let expression = parseExpr();
-                if (peek() !== ")")
+                if (peek() !== ")") {
                     throw new SyntaxError("expected )");
-
+                }
                 position++;
                 return expression;
             } else {
@@ -110,12 +100,11 @@ function expressionCalculator(expr) {
             return expression;
         }
 
-
         let result = parseExpr();
 
-        if (position !== tokens.length)
+        if (position !== tokens.length) {
             throw new SyntaxError("unexpected '" + peek() + "'");
-
+        }
 
         return result;
     }
@@ -124,7 +113,6 @@ function expressionCalculator(expr) {
     function evaluate(obj) {
         switch (obj.type) {
             case "number":  return parseInt(obj.value);
-            // case "name":  return variables[obj.id] || 0;
             case "+":  return evaluate(obj.left) + evaluate(obj.right);
             case "-":  return evaluate(obj.left) - evaluate(obj.right);
             case "*":  return evaluate(obj.left) * evaluate(obj.right);
@@ -138,10 +126,7 @@ function expressionCalculator(expr) {
         }
     }
 
-
-
     return evaluate(parse(expr));
-
 }
 
 
